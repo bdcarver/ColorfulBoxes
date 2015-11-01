@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title> Colorful Boxes </title>
+</head>
+<style>
+	.box{
+		width: 50px; 
+		height: 50px; 
+		margin: 5px;
+	}
+	.gridBox{
+		width: 50px; 
+		height: 50px; 
+		margin: 5px;
+		border-style: solid;
+		display: table;
+	}
+	#gridArea{
+		float: right;
+	}
+	#boxArea{
+		float: left;
+	}
+</style>
+
+<body>
+
+	<em>To color one of the white grid boxes, simply click on one of the colored boxes and
+	then on the white one.
+	
+	You also have the option of changing the colors or number of the colored boxes and
+	of changing the dimensions of the grid of white squares.</em>
+	
+	<p>
+	<p>
+	
+	
+	How many colored boxes would you like?
+	<input type = "text" id = "numBoxes">
+	<button onclick="getNumBoxes()">Submit</button>
+	<p>
+	<p>
+	Choose grid dimension.
+	<input type = "text" id= "gridDim">
+	<button onclick="grid()"> Submit</button>
+	
+	
+	<div id = "gridArea"> </div>
+	
+	<div id = "boxArea"> </div>
+
+	
+
+<script type="text/javascript">
+	// global var keeps track of last color clicked; initialized at white
+	lastClicked = (0).toString(16);
+	
+	function randColor() {
+		/* algorithm for rgb values: get random number from 0 to 256 exclusive,
+		cut off decimal, convert to hexadecimal value, and take last two numbers.
+		If the initial random number was a single digit, the '0' pads it. */
+		
+		var redValue = ('0'+(Math.random()*256|0).toString(16)).slice(-2);
+		var greenValue = ('0'+(Math.random()*256|0).toString(16)).slice(-2);
+		var blueValue = ('0'+(Math.random()*256|0).toString(16)).slice(-2);
+		var color = '#'+redValue+greenValue+blueValue;
+		return color;
+	}
+	
+	function getNumBoxes() {
+		var boxes;
+		
+		// determine if user has inputted; if not, just generate 8
+		// this function assumes valid integer input
+		if (document.getElementById("numBoxes").value > 0){
+			boxes = document.getElementById("numBoxes").value;
+		} else {
+			boxes = 8;
+		}
+		
+		// first we get rid of any preexisting boxes
+		document.getElementById("boxArea").innerHTML = "";
+		
+		// the loop takes the number of boxes and generates each one with a random color 
+
+		for (var i=0; i<boxes; i++) {
+			
+			color = randColor();	
+	
+			//adding boxes to page
+			var si = String(i);
+			var htmlStringBeg = "<div class=\"box\" id=\""+i+"\"onclick=\"storeColor("+si+")\" style=background-color:";
+			var htmlStringEnd = "> </div>";
+			var buttonString = "<button onclick=\"chngColRan(id)\" id="+i+ "> Change color </button>";
+			document.getElementById("boxArea").innerHTML += htmlStringBeg+color+htmlStringEnd;
+			document.getElementById("boxArea").innerHTML += buttonString;
+			
+			
+
+		}
+	}
+	
+	function storeColor(id) {
+		lastClicked = String(document.getElementById(id).style.backgroundColor);
+	}
+	
+	// assigns a random color
+	function chngColRan(id) {
+		color = randColor();
+		document.getElementById(id).style.backgroundColor = color;
+	}
+	
+	// takes a color as parameter and assigns it to the id
+	function chngCol(id,color) {
+		id.style.backgroundColor = color;
+	}
+
+	function grid(){
+		var dimens;
+		
+		// determine if user has input; if not, generate 2x2
+		// this function assumes a valid integer input
+		if  (document.getElementById("gridDim").value > 0) {
+			dimens = document.getElementById("gridDim").value;
+		} else {
+			dimens = 2;
+		}
+		
+		// get rid of preexisting grid 
+		document.getElementById("gridArea").innerHTML = "";
+		
+		// set width of grid container based on dimensions
+		var width = (50+20)*dimens;
+		document.getElementById("gridArea").style.width = width+"px";
+		
+		
+		// create grid
+		for (var x=0;x<dimens*dimens; x++) {
+			var htmlStringBeg = "<div class = \"gridBox\" id=\"G"+x+"\"";
+			var midString = " style=float:right; ";
+			var htmlStringEnd = "> </div>";
+			var old_html = document.getElementById("gridArea").innerHTML;
+			document.getElementById("gridArea").innerHTML = old_html+ htmlStringBeg + midString+htmlStringEnd;
+			
+			// create onclick so that the background color will change when clicked
+			var sx = "G"+x;
+			document.getElementById("G"+x).setAttribute("onclick", "chngCol("+sx+", lastClicked)");
+
+
+				
+		}
+	}
+	
+getNumBoxes();
+grid();
+</script>
